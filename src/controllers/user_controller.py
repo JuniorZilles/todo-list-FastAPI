@@ -1,15 +1,14 @@
 from flask import Blueprint, g
 from flask_expects_json import expects_json
-from src.validators.todo.post_schema import post_schema
+from src.validators.user.post_schema import post_schema
+user = Blueprint('user', __name__, url_prefix='/user')
 
-todo = Blueprint('todo', __name__, url_prefix='/todo')
-
-@todo.post('/')
+@user.post('/')
 @expects_json(post_schema, check_formats=True)
 def create():
-    #todo = Todo().from_dict(g.data)
+    #user = User().from_dict(g.data)
     return "<p>Hello, World!</p>"
 
-@todo.get('/')
+@user.get('/')
 def show():
     return "<p>Hello, World!</p>"
