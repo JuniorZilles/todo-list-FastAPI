@@ -1,12 +1,5 @@
-import os
-from waitress import serve
+import uvicorn
 from src.app import app
 
-
-env = os.getenv('PYTHON_ENV', default='dev')
-
 if __name__ == '__main__':
-    if env == 'dev':
-        app.run(port=3000, debug=True)
-    else:
-        serve(app, port=300, threads=2, url_prefix='/api/v1')
+    uvicorn.run("main:app", port=3000, log_level="info")

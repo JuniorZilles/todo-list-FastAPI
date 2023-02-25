@@ -1,19 +1,20 @@
-from flask import Flask, jsonify
-from jsonschema import ValidationError
+from fastapi import FastAPI
+from fastapi.exceptions  import RequestValidationError
+from fastapi.responses import JSONResponse
+from src.create_db import createDatabase
 from src.routes import register_blueprints
 
+app = FastAPI()
 
-app = Flask(__name__)
-
+createDatabase()
 register_blueprints(app)
 
-@app.errorhandler(400)
-def bad_request(error):
-    if isinstance(error.description, ValidationError):
-        original_error = error.description
-        return jsonify({'error': original_error.message}), 400
-    return error
+@app.exception_handler(RequestValidationError)
+def bad_request(request, exc):
+    if isinstance(exc, RequestValidationError):
+        return JSONResponse({'status':400, 'errors': exc.errors()})
+    return exc
 
-@app.errorhandler(404)
-def not_found(error):
-    return {'status':404, 'message': 'resource not found'}, 404
+@app.exception_handler(404)
+def not_found(request, exc):
+    return JSONResponse({'status':404, 'message': 'resource not found'})

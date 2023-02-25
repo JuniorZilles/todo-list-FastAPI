@@ -11,3 +11,9 @@ python -m venv env
 # activate environment
 env/Scripts/activate.bat
 ```
+
+## install dependencies
+
+```bash
+pip install -r requirements.txt
+```
