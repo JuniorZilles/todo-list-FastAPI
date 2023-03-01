@@ -1,6 +1,7 @@
-from fastapi import status, APIRouter
-from fastapi.responses import JSONResponse
-from src.validators.user.post_schema import User
+from fastapi import APIRouter
+from src.utils.request_responses import internalError, notFound, success
+from src.validators.user.post_schema import CreateUser
+from src.validators.user.put_schema import UpdateUser
 from src.use_cases.user_use_case import UserUseCase
 
 router = APIRouter(
@@ -11,28 +12,51 @@ router = APIRouter(
 )
 
 @router.post('/', status_code=201)
-def create(payload:User):
+def create(payload:CreateUser):
     try:
         user = UserUseCase().save(payload)
         return user.toDict()
     except Exception as e:
-        response = JSONResponse(content={'status':500, 'message': str(e)})
-        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-        return response
+        return internalError(e)
 
 
 @router.get('/{id}')
 def show(id: str):
-    return "<p>Hello, World!</p>"
+    try:
+        user = UserUseCase().findById(id)
+        if user == None:
+            return notFound()
+        return user.toDict()
+    except Exception as e:
+        return internalError(e)
 
 @router.get('/')
-def list():
-    return "<p>Hello, World!</p>"
+def list(offset: int = 0, limit: int = 250):
+    try:
+        users = UserUseCase().findAll(limit, offset)
+        items = [user.toDict() for user in users]
+        return {'limit':limit, 'offset': offset, 'items': items }
+    except Exception as e:
+        return internalError(e)
 
 @router.put("/{id}")
-async def update(id: str, user :User):
-    return "<p>Hello, World!</p>"
+async def update(id: str, payload:UpdateUser):
+    try:
+        qtd = UserUseCase().update(id, payload)
+        if qtd > 0:
+            return success()
+        else:
+            return notFound()
+    except Exception as e:
+        return internalError(e)
 
 @router.delete("/{id}")
 async def delete(id: str):
-    return "<p>Hello, World!</p>"
+    try:
+        qtd = UserUseCase().delete(id)
+        if qtd > 0:
+            return success()
+        else:
+            return notFound()
+    except Exception as e:
+        return internalError(e)

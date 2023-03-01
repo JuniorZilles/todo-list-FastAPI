@@ -11,3 +11,17 @@ class UserRepository():
         self.db.add(user)
         self.db.commit()
         return user
+    
+    def findById(self, id:str):
+        return self.db.query(User).filter(User.id == id).first()
+    
+    def find(self, limit:int, offset:int):
+        return self.db.query(User).offset(offset).limit(limit).all()
+    
+    def delete(self, id:str):
+        user = self.db.query(User).filter(User.id == id).delete()
+        return user
+    
+    def update(self, id:str, payload):
+        user = self.db.query(User).filter(User.id == id).update(payload)
+        return user

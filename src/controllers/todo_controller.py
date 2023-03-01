@@ -1,6 +1,7 @@
-from fastapi import status, APIRouter
-from fastapi.responses import JSONResponse
-from src.validators.todo.post_schema import Task
+from fastapi import APIRouter
+from src.utils.request_responses import internalError, notFound, success
+from src.validators.todo.post_schema import CreateTask
+from src.validators.todo.put_schema import UpdateTask
 from src.use_cases.todo_use_case import TodoUseCase
 
 router = APIRouter(
@@ -11,27 +12,50 @@ router = APIRouter(
 )
 
 @router.post('/', status_code=201)
-def create(task: Task):
+def create(task: CreateTask):
     try:
         todo = TodoUseCase().save(task)
         return todo.toDict()
     except Exception as e:
-        response = JSONResponse(content={'status':500, 'message': str(e)})
-        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-        return response
+        return internalError(e)
 
 @router.get('/{id}')
 def show(id: str):
-    return "<p>Hello, World!</p>"
+    try:
+        todo = TodoUseCase().findById(id)
+        if todo == None:
+            return notFound()
+        return todo.toDict()
+    except Exception as e:
+        return internalError(e)
 
 @router.get('/')
-def list():
-    return "<p>Hello, World!</p>"
+def list(offset: int = 0, limit: int = 250):
+    try:
+        todos = TodoUseCase().findAll(limit, offset)
+        items = [todo.toDict() for todo in todos]
+        return {'limit':limit, 'offset': offset, 'items': items }
+    except Exception as e:
+        return internalError(e)
 
 @router.put("/{id}")
-async def update(id: str, task: Task):
-    return "<p>Hello, World!</p>"
+async def update(id: str, payload: UpdateTask):
+    try:
+        qtd = TodoUseCase().update(id, payload)
+        if qtd > 0:
+            return success()
+        else:
+            return notFound()
+    except Exception as e:
+        return internalError(e)
 
 @router.delete("/{id}")
 async def delete(id: str):
-    return "<p>Hello, World!</p>"
+    try:
+        qtd = TodoUseCase().delete(id)
+        if qtd > 0:
+            return success()
+        else:
+            return notFound()
+    except Exception as e:
+        return internalError(e)

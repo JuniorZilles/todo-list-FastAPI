@@ -21,4 +21,4 @@ class User(Base):
     tasks = relationship('Todo', backref='user')
 
     def toDict(self):
-        return { c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs }
+        return { c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs if c.key != 'password' }

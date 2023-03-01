@@ -2,19 +2,14 @@ from pydantic import BaseModel, validator
 from datetime import date
 import re
 
-from src.utils.cpf_validator import cpf_validate
-
-class CreateUser(BaseModel):
-    name: str
-    email: str
-    cpf: str
-    birth_date: date
-    password:str
-    address:str
-    city:str
-    state:str
-    country:str
-    zip_code:str
+class UpdateUser(BaseModel):
+    name: str | None = None
+    birth_date: date | None = None
+    address:str | None = None
+    city:str | None = None
+    state:str | None = None
+    country:str | None = None
+    zip_code:str | None = None
 
     @validator('name')
     def name_size(cls, v):
@@ -23,37 +18,11 @@ class CreateUser(BaseModel):
         if len(v) < 7:
             raise ValueError('name size must be greater than 6')
         return v
-    
-    @validator('email')
-    def email_format(cls, v):
-        if v.strip() == '' or v == None:
-            raise ValueError('email is required')
-        if re.search("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$", v) == None:
-            raise ValueError('invalid email')
-        return v
-
-    @validator('cpf')
-    def cpf_format(cls, v):
-        if v.strip() == '' or v == None:
-            raise ValueError('cpf is required')
-        if re.search('^\d{3}.\d{3}.\d{3}-\d{2}$', v) == None:
-            raise ValueError('cpf doesnt match the format ^\d{3}.\d{3}.\d{3}-\d{2}$')
-        if cpf_validate(v) != True:
-            raise ValueError('invalid cpf')
-        return v
 
     @validator('birth_date')
     def birth_date_format(cls, v):
         if v == None:
             raise ValueError('birth_date is required')
-        return v
-
-    @validator('password')
-    def password_size(cls, v):
-        if v.strip() == '' or v == None:
-            raise ValueError('password should not be empty')
-        if len(v) < 6:
-            raise ValueError('password size must be greater than 6')
         return v
 
     @validator('address')

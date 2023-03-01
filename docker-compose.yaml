@@ -24,6 +24,26 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=postgres
     links:
       - "postgres:database"
+
+  app:
+    container_name: api-svc
+    build: .
+    ports:
+        - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/todo
+      KEY: kdlfnsdlnfçskfnmsçfwkefnmlwk
+      PORT: 3000
+    entrypoint:
+      - npm
+      - run
+      - start:prod
+    links:
+      - postgres:database
+    depends_on:
+      - postgres
+    networks:
+      - postgres-network
 volumes:
   reserved: 
 

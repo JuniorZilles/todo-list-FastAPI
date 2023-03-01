@@ -2,18 +2,13 @@
 TODO list to practice python
 
 
-## set up environment
-
-```bash
-# create environment
-python -m venv env
-
-# activate environment
-env/Scripts/activate.bat
-```
-
 ## install dependencies
 
 ```bash
 pip install -r requirements.txt
+```
+
+## deploy using docker-compose
+```bash
+docker-compose up -d
 ```
