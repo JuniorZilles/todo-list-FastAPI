@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 
 def notFound():
     response = JSONResponse(content={'status':404, 'message': 'Not found'})
-    response.status_code = status.HTTP_200_OK
+    response.status_code = status.HTTP_404_NOT_FOUND
     return response
 
 def internalError(e):
@@ -14,4 +14,9 @@ def internalError(e):
 def success():
     response = JSONResponse(content={'status':200, 'message': 'Success'})
     response.status_code = status.HTTP_200_OK
+    return response
+
+def alreadyCreated():
+    response = JSONResponse(content={'status':409, 'message': 'Resource already created'})
+    response.status_code = status.HTTP_409_CONFLICT
     return response

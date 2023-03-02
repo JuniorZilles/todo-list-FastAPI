@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from src.utils.request_responses import internalError, notFound, success
+from src.utils.request_responses import alreadyCreated, internalError, notFound, success
 from src.validators.user.post_schema import CreateUser
 from src.validators.user.put_schema import UpdateUser
 from src.use_cases.user_use_case import UserUseCase
@@ -15,6 +15,8 @@ router = APIRouter(
 def create(payload:CreateUser):
     try:
         user = UserUseCase().save(payload)
+        if user == None:
+            return alreadyCreated()
         return user.toDict()
     except Exception as e:
         return internalError(e)

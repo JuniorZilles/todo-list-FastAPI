@@ -6,6 +6,9 @@ class UserUseCase():
         self.repo = UserRepository()
 
     def save(self, data):
+        temp_user = self.repo.findByDuplicate(data.cpf, data.email)
+        if temp_user != None:
+            return None
         data.password = encryptString(data.password)
         user = self.repo.save(data)
         return user
