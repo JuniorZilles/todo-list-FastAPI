@@ -12,6 +12,11 @@ def user():
         "zip_code": "93950-000"
     }
 
+def update_user():
+    return {
+        "name": "atualização do brasil",
+    }
+
 def invalid_user():
     return {
         "email": "mail.com",
